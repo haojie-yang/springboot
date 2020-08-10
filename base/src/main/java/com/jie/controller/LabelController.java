@@ -50,7 +50,6 @@ public class LabelController {
 
     @RequestMapping("/findByPage")
     public Result findByPage(@RequestBody LabelParam labelParam){
-
         return labelService.findByPage(labelParam);
     }
 
