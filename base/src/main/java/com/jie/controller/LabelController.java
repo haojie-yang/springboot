@@ -7,6 +7,7 @@ import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @description:
@@ -40,6 +41,17 @@ public class LabelController {
     @RequestMapping("/findByid")
     public Result delete(@PathVariable("id") String id){
         return labelService.delete(id);
+    }
+
+    @RequestMapping("/findSearch")
+    public Result findSearch(@RequestBody LabelParam labelParam){
+        return labelService.findSearch(labelParam);
+    }
+
+    @RequestMapping("/findByPage")
+    public Result findByPage(@RequestBody LabelParam labelParam){
+
+        return labelService.findByPage(labelParam);
     }
 
 

@@ -4,12 +4,25 @@ import com.jie.Service.LabelService;
 import com.jie.pojo.Label;
 import com.jie.pojo.LabelParam;
 import com.jie.repository.LabelRepository;
+import entity.PageResult;
 import entity.Result;
 import entity.StatusCode;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.ls.LSInput;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -54,6 +67,52 @@ public class LabelServiceImpl implements LabelService {
         }else {
             return new Result(true,StatusCode.OK,"删除失败");
         }
+    }
+
+    @Override
+    public Result findSearch(LabelParam labelParam) {
+        Specification<Label> specification = new Specification<Label>() {
+            @Override
+            public Predicate toPredicate(Root<Label> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (labelParam.getLabelName() != null && !labelParam.getLabelName().equals("")){
+                    Predicate predicate = criteriaBuilder.like(root.get("labelName").as(String.class), "%" + labelParam.getLabelName() + "%");
+                    predicates.add(predicate);
+                }
+                if (labelParam.getState() != null && !labelParam.getState().equals("")){
+                    Predicate predicate = criteriaBuilder.equal(root.get("state").as(String.class), labelParam.getState());
+                    predicates.add(predicate);
+                }
+                Predicate[] predicates1 = new Predicate[predicates.size()];
+                predicates.toArray(predicates1);
+                return criteriaBuilder.and(predicates1);
+            }
+        };
+        return new Result(true, StatusCode.OK,"查询成功",labelRepository.findAll(specification));
+    }
+
+    @Override
+    public Result findByPage(LabelParam labelParam) {
+        Pageable pageable = PageRequest.of(labelParam.getPage() - 1, labelParam.getSize());
+        Specification<Label> specification = new Specification<Label>() {
+            @Override
+            public Predicate toPredicate(Root<Label> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (labelParam.getLabelName() != null && !labelParam.getLabelName().equals("")){
+                    Predicate predicate = criteriaBuilder.like(root.get("labelName").as(String.class), "%" + labelParam.getLabelName() + "%");
+                    predicates.add(predicate);
+                }
+                if (labelParam.getState() != null && !labelParam.getState().equals("")){
+                    Predicate predicate = criteriaBuilder.equal(root.get("state").as(String.class), labelParam.getState());
+                    predicates.add(predicate);
+                }
+                Predicate[] predicates1 = new Predicate[predicates.size()];
+                predicates.toArray(predicates1);
+                return criteriaBuilder.and(predicates1);
+            }
+        };
+        Page<Label> labels = labelRepository.findAll(specification, pageable);
+        return new Result(true, StatusCode.OK,"查询成功",new PageResult<Label>(labels.getTotalElements(),labels.getContent()));
     }
 }
 

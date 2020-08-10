@@ -29,5 +29,8 @@ public class LabelParam {
 
     private String recommend;//是否推荐
 
+    private Integer page;//页数
+
+    private Integer size;//页码大小
 
 }

@@ -18,4 +18,8 @@ public interface LabelService {
     Result save(LabelParam labelParam);
 
     Result delete(String id);
+
+    Result findSearch(LabelParam labelParam);
+
+    Result findByPage(LabelParam labelParam);
 }

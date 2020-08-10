@@ -22,8 +22,4 @@ public class BaseApplication {
         log.info("启动成功!访问地址: http://127.0.0.1:" + environment.getProperty("server.port") + "/login/login");
     }
 
-    @Bean
-    public IdWorker idWorker(){
-        return new IdWorker();
-    }
 }
